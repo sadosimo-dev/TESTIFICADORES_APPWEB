@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INFORME DE TESTIFICADORES ADE - Asociación Dominicana del Este</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --ade-blue: #00386B; 
+            --ade-blue-dark: #002244;
+            --ade-blue-light: #005691;
+            --ade-gold: #D4AF37;
+            --ade-bg: #F4F6F9;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--ade-bg);
+            color: #333;
+        }
+
+        .navbar-ade {
+            background-color: var(--ade-blue);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .navbar-ade .navbar-brand, .navbar-ade .nav-link {
+            color: #ffffff;
+        }
+
+        .navbar-ade .nav-link:hover, .navbar-ade .nav-link.active {
+            color: var(--ade-gold);
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+        }
+
+        .header-logo {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+        }
+
+        .card-indicator {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-indicator:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        .icon-box {
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .bg-ade-primary { background-color: var(--ade-blue); color: white; }
+        .bg-ade-dark { background-color: var(--ade-blue-dark); color: white; }
+        .bg-ade-gold { background-color: var(--ade-gold); color: white; }
+        .bg-ade-light { background-color: var(--ade-blue-light); color: white; }
+
+        .chart-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: white;
+        }
+
+        .btn-ade {
+            background-color: var(--ade-blue);
+            color: white;
+            border: none;
+        }
+
+        .btn-ade:hover {
+            background-color: var(--ade-blue-dark);
+            color: white;
+        }
+
+        .btn-ade-gold {
+            background-color: var(--ade-gold);
+            color: #000;
+            font-weight: 600;
+            border: none;
+        }
+
+        .btn-ade-gold:hover {
+            background-color: #c09d2e;
+            color: #000;
+        }
+
+        .badge-auth {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .card-indicator, .chart-card { box-shadow: none !important; border: 1px solid #ccc !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SPINNER DE CARGA -->
+    <div id="loadingOverlay">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+        <h5 class="mt-3 fw-bold" style="color: var(--ade-blue);">Sincronizando con Google Sheets...</h5>
+    </div>
+
+    <!-- LOGO SVG -->
+    <script>
+        const LOGO_SDA_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><circle cx="150" cy="150" r="150" fill="%2300386B"/><g fill="%23FFFFFF"><path d="M170.8 29.8c-2.4 32.5-22.3 62-49 79.7-18 12-32.2 30-36.5 51.5 25.1-16 46.1-38.3 60.1-64.8 13.9 14 26.6 29.1 35.7 46.1 12.1 22.8 19 48.6 18.9 74.8h30.1c.1-33.5-9.1-66.2-25.5-95.2-12.8-22.7-29.6-43.2-49.8-60.1 8.7-10.4 14.5-22.8 16-32zm-28.7 32.2c-15.6 15.6-28.2 34.3-37 54.8 18.7-12.7 34.7-29.2 46.7-48.3-3.1-2.3-6.4-4.4-9.7-6.5zm-22.1-18.1c-14.7 17.5-26.6 37.5-35.1 58.9 16.5-10.7 31-24.3 42.7-40.2-2.4-6.4-5-12.6-7.6-18.7z"/><path d="M150 212.5v-30.8h-18.2v10.5h9.3v20.3c-28.1 3.2-56.1 11-82.9 22.9 29.1 12 60 18.8 91.8 20.1v-43c31.8-1.3 62.7-8.1 91.8-20.1-26.8-11.9-54.8-19.7-82.9-22.9z"/><path d="M141.1 224.5v39.7c-26.8-2.1-52.9-8.4-77.5-18.7 23.3-11.7 48.2-18 73.5-20.6l4 3.9zm17.8 0l4-3.9c25.3 2.6 50.2 8.9 73.5 20.6-24.6 10.3-50.7 16.6-77.5 18.7v-35.4z"/></g></svg>`;
+    </script>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-ade sticky-top no-print">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#" onclick="switchView('general')">
+                <img id="navLogo" class="brand-logo" alt="Logo ADE">
+                <span>INFORME DE TESTIFICADORES ADE</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="nav-general" href="#" onclick="switchView('general')">Inicio</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            Zonas ADE
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="switchView('zona-1')">Zona 1 - San Pedro de Macorís</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="switchView('zona-2')">Zona 2 - La Romana</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="switchView('zona-3')">Zona 3 - Higüey</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="switchView('zona-4')">Zona 4 - Hato Mayor / El Seibo</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="switchView('zona-5')">Zona 5 - Miches / Punta Cana</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <span id="authStatusBadge" class="badge bg-secondary badge-auth"><i class="fa-solid fa-lock me-1"></i> Modo Lectura</span>
+                    <button class="btn btn-ade-gold btn-sm" onclick="handleAgregarClick()">
+                        <i class="fa-solid fa-plus-circle me-1"></i> Agregar Información
+                    </button>
+                    <button id="authBtn" class="btn btn-outline-light btn-sm" onclick="toggleAuthModal()">
+                        <i class="fa-solid fa-user me-1"></i> Login Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4 py-4">
+
+        <!-- HEADER INSTITUCIONAL -->
+        <div class="row mb-4 align-items-center bg-white p-3 rounded-3 shadow-sm mx-0 border-start border-4" style="border-color: var(--ade-blue) !important;">
+            <div class="col-md-8 d-flex align-items-center">
+                <img id="headerLogo" class="header-logo me-3" alt="Emblema ADE">
+                <div>
+                    <h3 class="fw-bold mb-0 text-dark" style="color: var(--ade-blue) !important;">Asociación Dominicana del Este (ADE)</h3>
+                    <p class="text-muted mb-0">Base de Datos Conectada a Google Sheets</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <button class="btn btn-sm btn-outline-secondary me-2" onclick="cargarDatosDesdeSheets()">
+                    <i class="fa-solid fa-rotate me-1"></i> Recargar Datos
+                </button>
+                <span class="badge bg-light text-dark p-2 border">
+                    <i class="fa-regular fa-calendar-alt me-1"></i> <span id="currentDate"></span>
+                </span>
+            </div>
+        </div>
+
+        <!-- MÓDULO 2: DASHBOARD GENERAL -->
+        <div id="view-general">
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-indicator p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size:0.8rem;">Total Testificadores</h6>
+                                <h2 class="fw-bold mb-0" id="stat-total-testificadores">0</h2>
+                            </div>
+                            <div class="icon-box bg-ade-primary"><i class="fa-solid fa-users"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-indicator p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size:0.8rem;">Zonas Activas</h6>
+                                <h2 class="fw-bold mb-0">5</h2>
+                            </div>
+                            <div class="icon-box bg-ade-dark"><i class="fa-solid fa-map-marked-alt"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-indicator p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size:0.8rem;">Distritos Con Reporte</h6>
+                                <h2 class="fw-bold mb-0" id="stat-total-distritos">0</h2>
+                            </div>
+                            <div class="icon-box bg-ade-light"><i class="fa-solid fa-draw-polygon"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card card-indicator p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size:0.8rem;">Iglesias Con Reporte</h6>
+                                <h2 class="fw-bold mb-0" id="stat-total-iglesias">0</h2>
+                            </div>
+                            <div class="icon-box bg-ade-gold"><i class="fa-solid fa-place-of-worship"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRÁFICOS GENERALES -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="card chart-card p-3 h-100">
+                        <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-bar me-2" style="color: var(--ade-blue)"></i>Testificadores por Zona</h6>
+                        <div style="position: relative; height:280px;"><canvas id="chartZonas"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card chart-card p-3 h-100">
+                        <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-pie me-2" style="color: var(--ade-blue)"></i>Distribución Porcentual</h6>
+                        <div style="position: relative; height:280px;"><canvas id="chartPieZonas"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="card chart-card p-3">
+                        <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-line me-2" style="color: var(--ade-gold)"></i>Top 10 Iglesias</h6>
+                        <div style="position: relative; height:300px;"><canvas id="chartTopIglesias"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA GENERAL -->
+            <div class="card chart-card p-4">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-table me-2"></i>Registro General (Sincronizado)</h5>
+                <div class="table-responsive">
+                    <table id="tableGeneral" class="table table-striped table-hover align-middle w-100">
+                        <thead style="background-color: var(--ade-blue); color: white;">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Zona</th>
+                                <th>Distrito</th>
+                                <th>Iglesia</th>
+                                <th>Fecha Registro</th>
+                                <th class="no-print">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÓDULO 4: DASHBOARD POR ZONA -->
+        <div id="view-zona" style="display:none;">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <div>
+                    <h3 id="zonaTitle" class="fw-bold mb-0" style="color: var(--ade-blue);">Zona</h3>
+                    <p class="text-muted mb-0">Dashboard regional</p>
+                </div>
+                <div class="d-flex gap-2 no-print">
+                    <button class="btn btn-outline-secondary" onclick="switchView('general')"><i class="fa-solid fa-arrow-left me-1"></i> Volver</button>
+                    <button class="btn btn-danger" onclick="exportarZonaPDF()"><i class="fa-solid fa-file-pdf me-1"></i> Descargar PDF</button>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card card-indicator p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size:0.8rem;">Testificadores en Zona</h6>
+                                <h2 class="fw-bold mb-0" id="stat-zona-testificadores">0</h2>
+                            </div>
+                            <div class="icon-box bg-ade-primary"><i class="fa-solid fa-user-check"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-indicator p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size:0.8rem;">Distritos Activos</h6>
+                                <h2 class="fw-bold mb-0" id="stat-zona-distritos">0</h2>
+                            </div>
+                            <div class="icon-box bg-ade-dark"><i class="fa-solid fa-sitemap"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-indicator p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold" style="font-size:0.8rem;">Iglesias Activas</h6>
+                                <h2 class="fw-bold mb-0" id="stat-zona-iglesias">0</h2>
+                            </div>
+                            <div class="icon-box bg-ade-gold"><i class="fa-solid fa-church"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="card chart-card p-3 h-100">
+                        <h6 class="fw-bold text-dark mb-3">Testificadores por Distrito</h6>
+                        <div style="position: relative; height:280px;"><canvas id="chartZonaDistritos"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card chart-card p-3 h-100">
+                        <h6 class="fw-bold text-dark mb-3">Testificadores por Iglesia</h6>
+                        <div style="position: relative; height:280px;"><canvas id="chartZonaIglesias"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card chart-card p-4">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-search me-2"></i>Buscador Zonal</h5>
+                <div class="row g-2 mb-3 no-print">
+                    <div class="col-md-4"><input type="text" id="filterZonaNombre" class="form-control" placeholder="Buscar por nombre..." onkeyup="filterZonaData()"></div>
+                    <div class="col-md-4"><select id="filterZonaDistrito" class="form-select" onchange="filterZonaData()"><option value="">Todos los Distritos</option></select></div>
+                    <div class="col-md-4"><select id="filterZonaIglesia" class="form-select" onchange="filterZonaData()"><option value="">Todas las Iglesias</option></select></div>
+                </div>
+                <div class="table-responsive">
+                    <table id="tableZona" class="table table-striped table-hover align-middle w-100">
+                        <thead style="background-color: var(--ade-blue); color: white;">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Distrito</th>
+                                <th>Iglesia</th>
+                                <th>Fecha Registro</th>
+                                <th class="no-print">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableZonaBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL LOGIN -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-ade-dark text-white">
+                    <h5 class="modal-title d-flex align-items-center gap-2">
+                        <img src="" class="brand-logo login-logo-img" alt="Logo">
+                        <span>Acceso Administrativo ADE</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Usuario</label>
+                            <input type="text" id="loginUser" class="form-control" placeholder="testificadoresADE" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Contraseña</label>
+                            <input type="password" id="loginPass" class="form-control" placeholder="••••••••" required>
+                        </div>
+                        <div id="loginError" class="alert alert-danger d-none">Usuario o contraseña incorrectos.</div>
+                        <button type="submit" class="btn btn-ade w-100 fw-bold py-2">Iniciar Sesión</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRO -->
+    <div class="modal fade" id="registroModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-ade-primary text-white">
+                    <h5 class="modal-title" id="registroModalTitle"><i class="fa-solid fa-user-plus me-2"></i>Registrar Testificador</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registroForm" onsubmit="guardarTestificador(event)">
+                        <input type="hidden" id="editId" value="">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nombre Completo</label>
+                            <input type="text" id="regNombre" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Zona</label>
+                            <select id="regZona" class="form-select" onchange="onZonaChange()" required>
+                                <option value="">-- Seleccione una Zona --</option>
+                                <option value="Zona 1 - San Pedro de Macorís">Zona 1 - San Pedro de Macorís</option>
+                                <option value="Zona 2 - La Romana">Zona 2 - La Romana</option>
+                                <option value="Zona 3 - Higüey">Zona 3 - Higüey</option>
+                                <option value="Zona 4 - Hato Mayor / El Seibo">Zona 4 - Hato Mayor / El Seibo</option>
+                                <option value="Zona 5 - Miches / Punta Cana">Zona 5 - Miches / Punta Cana</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Distrito</label>
+                            <select id="regDistrito" class="form-select" onchange="onDistritoChange()" disabled required>
+                                <option value="">-- Seleccione primero una Zona --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Iglesia</label>
+                            <select id="regIglesia" class="form-select" disabled required>
+                                <option value="">-- Seleccione primero un Distrito --</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-ade fw-bold">Guardar en Google Sheets</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        // ==========================================
+        // CONFIGURACIÓN DE URL DE GOOGLE APPS SCRIPT
+        // ==========================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyLds631Gm0CVAxdYvHZJZRaC0v4_JorOH2mg6WukgOOEJovre_OdCPIullrpma3v7a/exec';
+
+        const ESTRUCTURA_ADE = {
+            "Zona 1 - San Pedro de Macorís": {
+                "DISTRITO - Central San Pedro": ["Central San Pedro"],
+                "DISTRITO - Restauración": ["Restauración", "Alfa", "Los Tres Angeles", "La Trinidad", "Grupo Arca de Salvacion", "Cordero de Dios"],
+                "DISTRITO - Villa Magdalena": ["Villa Magdalena", "Las Colinas", "Villa Olimpica", "Barrio Azul-Sendero de luz", "Grupo Porvenir", "Grupo Brisa del este"],
+                "DISTRITO - Sarmiento": ["Sarmiento", "El Remanente", "El Soco", "La Esperanza de SPM", "Grupo Luz de Porvenir", "Rivera de Canaán, Boca del soco", "Regajo", "Grupo Jawar", "Grupo Batey Esperanza II"],
+                "DISTRITO - Barrio México": ["Central Barrio México I", "Punta de Garza II", "Omega", "El Brisal San Pedro", "Monte de Sión", "Punta Garza SPM", "Grupo Fortaleza", "Grupo Luz del coral", "Cemento"],
+                "DISTRITO - Filipinas": ["Filipinas", "Villa Faro I", "Villa Faro II", "La voz de la Ezperanza", "El Amor San Pedro", "Roca de la Eternidad", "Grupo Faro de Salvación"],
+                "DISTRITO - Placer Bonito": ["Placer Bonito", "Guayacanes", "Punta Pescadora", "Rosa de Sarón (La Mella)", "Barrio Blanco", "La Malena", "Los Conucos"],
+                "DISTRITO - Quisqueya": ["Quisqueya I", "Quisqueya II", "Quisqueya III", "Quisqueya IV S.C.", "Quisqueya V", "Grupo Quisqueya VI", "Los Llanos I", "Los Llanos II", "Batey Canutillo", "El Puerto Sol de Justicia", "Grupo Peniel (Cruce Cayacoa)"],
+                "DISTRITO - Villa Progreso": ["Villa Progreso I", "Villa Progreso II", "Barrio Lindo Maranatha", "Sendero de Amor", "Grupo El Eden", "Villa España (Fuente de Vida)"],
+                "DISTRITO - Sendero de Esperanza": ["24 de abril / Sendero de Esp", "Monte Cristi", "Santa Fe", "Villa centro", "Ramón Santana", "La Parcela I (Ramón Sant.)", "Grupo Sendero de Salvación", "Batey Campiña", "Grupo Guacaya", "Grupo Sendero de Fe", "Grupo Sendero de Paz", "Grupo Sendero de vida"],
+                "DISTRITO - Consuelo": ["Central Consuelo", "Guayabo Dulce", "Betania I", "Villa Enriquillo", "Betania II", "AB4", "Las Espinas", "Rancho Arriba", "Grupo Euscarduna", "Grupo Jalonga", "Grupo Piedra Viva"],
+                "DISTRITO - La Quince": ["La Quince", "La Loma", "Monte Coca", "Angelina", "Doña Ana", "Grupo Batey Morquecho", "La Laura", "Las Pajas", "Los Filiu", "Villa Verde Consuelo"]
+            },
+            "Zona 2 - La Romana": {
+                "DISTRITO - Romana Central": ["Benerito", "Central Romana"],
+                "DISTRITO - Villa Verde": ["Villa Verde I", "Villa Verde II", "Villa Verde Creol. Canaán", "San Carlos", "Altos de Villa Verde", "Villa San Carlos", "Villa Verde III, Luz V."],
+                "DISTRITO - Villa Paraiso": ["Villa Paraiso Central", "Faro de Luz I", "Villa Par. IV El Tamarindo", "Villa Paraiso III", "Villa Paraiso II (La Lechoza)", "Villa Caoba", "Grupo Faro de Luz II", "Grupo Puerto Rico"],
+                "DISTRITO - La Esperanza": ["La Esperanza", "Rio Salado", "Villa Nazaret Pereyra", "Bancola", "Villa Alacrán La Fe", "Lirios de los Valles I", "Lirios de los Valles II"],
+                "DISTRITO - Villa España": ["Villa España (Luz de Cristo)", "Rom del Oeste (Cam De luz)", "Las Olivas I", "Grupo Las Dos Olivas II", "Grupo La Paz"],
+                "DISTRITO - Piedra Linda": ["Piedra Linda I", "Piedra Linda II (Nuevo Renacer)", "Los Diez Mandamientos", "Altos de Piedra Linda", "Pica Piedra (Luz y Paz)", "Grupo Nuevo Renacer", "Piedra Linda III (La Unión)", "Grupo Nuevo Eden"],
+                "DISTRITO - Guaymate": ["Guaymate", "Higueral", "Ebenezer Romana", "Batey 106", "Lechuga"]
+            },
+            "Zona 3 - Higüey": {
+                "DISTRITO - Central Higuey": ["Central Higuey"],
+                "DISTRITO - La Redención": ["La Redención", "Esmirna", "La Fe", "Luz de Sión", "Grupo la Carcel ( Higüey)"],
+                "DISTRITO - La Florida": ["Florida", "Sendero de Paz", "Frances I (Shekina)", "Anamuyita", "Nuevo Renacer (Cambelen)", "Camino de Sión"],
+                "DISTRITO - La Otra Banda": ["La Otra Banda (Central)", "Eben- Ezer Grupo La Otra B.", "Cerro Gordo (Arca de Noe)", "Esperanza de Vida", "La Seiba (Nuevo Amanecer)", "Grupo El Isleño", "Grupo La Peña de Horeb", "San Francisco (Luz de Espe)", "Grupo El Macao"],
+                "DISTRITO - Enmanuel": ["Enmanuel I", "Cerro Lindo (Shalon)", "Sendero de Esperanza Higuey", "El Remanente", "Enmanuel II (Luz Naciente)", "Grupo Belen", "Faro de Luz", "Grupo Nueva Vida"],
+                "DISTRITO - Los Rosales": ["Los Rosales", "La Esperanza Higuey", "Brisas del Llano", "Villa Hortensia Higuey", "Hato de Mana I", "Hato de Mana II", "Grupo El Eden"],
+                "DISTRITO - Nueva Jerusalem": ["Nueva Jerusalem", "Bethel", "La Paciencia de los Santos", "Nuevo Amanecer (Higuey 4)", "Grupo Alma Misionera", "Grupo Sión (Los Morales)"],
+                "DISTRITO - San Martin": ["San Martin", "Yuma La Fe de Jesús", "San Pedro (Canaán) Higuey", "Boca de Yuma (Jerusalem)", "Los Tocones", "Matachalupe (Vida Nueva)", "Grupo Apocalipsis", "Grupo La Playita", "Grupo Los Negros"]
+            },
+            "Zona 4 - Hato Mayor / El Seibo": {
+                "DISTRITO - Hato Mayor Central": ["Central Hato Mayor", "Cibahuete", "Enmanuel", "Punta de Garza (La Fe de Jesús)", "Luz de Cristo"],
+                "DISTRITO - Ondina": ["Ondina", "Arca de Jehova (Villa Vilorio)", "Las Malvinas", "Villa Ortega (La Perseverancia)", "La Nueva Jerusalen"],
+                "DISTRITO - El Amor": ["El Amor", "El Nuevo Renacer", "Hatillo (La pureza)", "Casa Colorada", "Grupo Antioquía", "San Miguel", "Pringamosa", "Grupo Jardin del Eden"],
+                "DISTRITO - Seibo Central": ["Central del Seibo", "Pedro Sanchez", "La Higuera", "Las Cuchillas", "Grupo Capotillo", "La Majagua"],
+                "DISTRITO - Las Quinientas": ["Las Quinientas", "Jobo Dulce", "Ginandiana", "Candelaria", "El Cerrito", "Las Palmillas (Fuente de Vida)", "Grupo Magarin Abajo"],
+                "DISTRITO - Sabana de la Mar": ["Sabana de la Mar (Fuente de vida)", "El Valle II(Vista del Eden)", "El Valle I (Luz del Valle)", "Luz de vida (Grupo)", "Magua", "Grupo 12B", "Yanigua - El Valle", "Remanente del Edén"],
+                "DISTRITO - Avanzada El Cercado": ["El Cercado", "Las Palmillas", "Rancho Chiquito", "Palma de Gallo", "El Rancho", "Bejucal", "Grupo la Tuna", "Loma Larga"],
+                "DISTRITO - Avanzada Villa Navarro": ["Villa Navarro I", "Villa Navarro II", "Sendas Antiguas", "El Manchado"],
+                "DISTRITO - Avanzada Villa Guerrero": ["Bethel-villa Guerrero", "La manicera", "Renacer", "Sábana del Cuey", "Cruce de pavon- Santa Rita", "El Palmal del Cuey", "Higuá"]
+            },
+            "Zona 5 - Miches / Punta Cana": {
+                "DISTRITO - Punta Cana": ["Punta Cana Oásis", "Sinaí Punta Cana", "Pueblo Bávaro (Punta Cana)", "La Doble vía (Faro de Luz)", "Betzaida", "Juanillo", "Grupo cabeza de torro"],
+                "DISTRITO - Verón Punta Cana": ["Verón El Refugio", "Remanente Friusa Dom.", "Friusa Bávaro Enmanuel", "Samaritano", "Bethel Punta Cana", "Galilea", "Grupo Betlehem", "La javilla", "Grupo Buren"],
+                "DISTRITO - Miches": ["Central Miches", "Los Franceses", "La Mina", "El Asfalto", "La Gina", "Lo Franceses", "La Colonia", "Miramar-Miches"],
+                "DISTRITO - Laguna de Nisibón": ["Laguna de Nisibón(Arca de S.)", "Vista Alegre", "Cañada Honda", "La Curtiembre ( La pureza)", "Sabana de Nisibón"]
+            }
+        };
+
+        let testificadores = [];
+        let isAuthenticated = false;
+        let currentZonaView = null;
+        let dataTableGeneral = null;
+
+        let chartZonasInst = null, chartPieZonasInst = null, chartTopIglesiasInst = null;
+        let chartZonaDistritosInst = null, chartZonaIglesiasInst = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("navLogo").src = LOGO_SDA_SVG;
+            document.getElementById("headerLogo").src = LOGO_SDA_SVG;
+            document.querySelectorAll(".login-logo-img").forEach(el => el.src = LOGO_SDA_SVG);
+
+            document.getElementById("currentDate").innerText = new Date().toLocaleDateString("es-DO", {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+
+            cargarDatosDesdeSheets();
+        });
+
+        function showLoading(show) {
+            document.getElementById("loadingOverlay").style.display = show ? "flex" : "none";
+        }
+
+        // ==========================================
+        // COMUNICACIÓN CON GOOGLE SHEETS
+        // ==========================================
+        async function cargarDatosDesdeSheets() {
+            showLoading(true);
+            try {
+                const response = await fetch(SCRIPT_URL);
+                testificadores = await response.json();
+                renderCurrentView();
+            } catch (error) {
+                alert("Error al cargar datos desde Google Sheets. Verifique la URL de Apps Script.");
+                console.error(error);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function guardarTestificador(e) {
+            e.preventDefault();
+            if (!isAuthenticated) return;
+
+            showLoading(true);
+            const editId = document.getElementById("editId").value;
+            const nombre = document.getElementById("regNombre").value.trim();
+            const zona = document.getElementById("regZona").value;
+            const distrito = document.getElementById("regDistrito").value;
+            const iglesia = document.getElementById("regIglesia").value;
+
+            const isEdit = editId !== "";
+            const id = isEdit ? editId : Date.now().toString();
+            const fecha = isEdit ? (testificadores.find(t => t.id == editId)?.fecha || new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0];
+
+            const payload = {
+                action: isEdit ? 'edit' : 'add',
+                data: { id, nombre, zona, distrito, iglesia, fecha }
+            };
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                bootstrap.Modal.getInstance(document.getElementById('registroModal')).hide();
+                await cargarDatosDesdeSheets();
+            } catch (error) {
+                alert("Error al guardar en Google Sheets.");
+                console.error(error);
+                showLoading(false);
+            }
+        }
+
+        async function eliminarRegistro(id) {
+            if (!isAuthenticated) return;
+            if (!confirm("¿Desea eliminar este registro permanentemente de Google Sheets?")) return;
+
+            showLoading(true);
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'delete', data: { id } })
+                });
+                await cargarDatosDesdeSheets();
+            } catch (error) {
+                alert("Error al eliminar el registro.");
+                console.error(error);
+                showLoading(false);
+            }
+        }
+
+        // ==========================================
+        // AUTENTICACIÓN Y FORMULARIOS
+        // ==========================================
+        function toggleAuthModal() {
+            if (isAuthenticated) {
+                isAuthenticated = false;
+                document.getElementById("authStatusBadge").className = "badge bg-secondary badge-auth";
+                document.getElementById("authStatusBadge").innerHTML = `<i class="fa-solid fa-lock me-1"></i> Modo Lectura`;
+                document.getElementById("authBtn").innerHTML = `<i class="fa-solid fa-user me-1"></i> Login Admin`;
+                renderCurrentView();
+            } else {
+                new bootstrap.Modal(document.getElementById('loginModal')).show();
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById("loginUser").value.trim();
+            const p = document.getElementById("loginPass").value.trim();
+
+            if (u === "testificadoresADE" && p === "testificadoresADE") {
+                isAuthenticated = true;
+                document.getElementById("loginError").classList.add("d-none");
+                document.getElementById("authStatusBadge").className = "badge bg-success badge-auth";
+                document.getElementById("authStatusBadge").innerHTML = `<i class="fa-solid fa-user-check me-1"></i> Admin Autenticado`;
+                document.getElementById("authBtn").innerHTML = `<i class="fa-solid fa-sign-out-alt me-1"></i> Salir`;
+                bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+                document.getElementById("loginForm").reset();
+                renderCurrentView();
+            } else {
+                document.getElementById("loginError").classList.remove("d-none");
+            }
+        }
+
+        function handleAgregarClick() {
+            if (!isAuthenticated) {
+                alert("Debe iniciar sesión como Administrador para modificar datos.");
+                new bootstrap.Modal(document.getElementById('loginModal')).show();
+                return;
+            }
+            resetFormModal();
+            document.getElementById("registroModalTitle").innerText = "Registrar Testificador";
+            new bootstrap.Modal(document.getElementById('registroModal')).show();
+        }
+
+        function onZonaChange() {
+            const zona = document.getElementById("regZona").value;
+            const distSelect = document.getElementById("regDistrito");
+            const iglSelect = document.getElementById("regIglesia");
+
+            distSelect.innerHTML = `<option value="">-- Seleccione un Distrito --</option>`;
+            iglSelect.innerHTML = `<option value="">-- Seleccione primero un Distrito --</option>`;
+            iglSelect.disabled = true;
+
+            if (zona && ESTRUCTURA_ADE[zona]) {
+                distSelect.disabled = false;
+                Object.keys(ESTRUCTURA_ADE[zona]).forEach(dist => {
+                    distSelect.innerHTML += `<option value="${dist}">${dist}</option>`;
+                });
+            } else {
+                distSelect.disabled = true;
+            }
+        }
+
+        function onDistritoChange() {
+            const zona = document.getElementById("regZona").value;
+            const dist = document.getElementById("regDistrito").value;
+            const iglSelect = document.getElementById("regIglesia");
+
+            iglSelect.innerHTML = `<option value="">-- Seleccione una Iglesia --</option>`;
+
+            if (zona && dist && ESTRUCTURA_ADE[zona] && ESTRUCTURA_ADE[zona][dist]) {
+                iglSelect.disabled = false;
+                ESTRUCTURA_ADE[zona][dist].forEach(igl => {
+                    iglSelect.innerHTML += `<option value="${igl}">${igl}</option>`;
+                });
+            } else {
+                iglSelect.disabled = true;
+            }
+        }
+
+        function resetFormModal() {
+            document.getElementById("registroForm").reset();
+            document.getElementById("editId").value = "";
+            document.getElementById("regDistrito").disabled = true;
+            document.getElementById("regIglesia").disabled = true;
+        }
+
+        function editarRegistro(id) {
+            if (!isAuthenticated) return;
+            const item = testificadores.find(t => t.id == id);
+            if (!item) return;
+
+            document.getElementById("editId").value = item.id;
+            document.getElementById("regNombre").value = item.nombre;
+            document.getElementById("regZona").value = item.zona;
+            onZonaChange();
+            document.getElementById("regDistrito").value = item.distrito;
+            onDistritoChange();
+            document.getElementById("regIglesia").value = item.iglesia;
+
+            document.getElementById("registroModalTitle").innerText = "Editar Testificador";
+            new bootstrap.Modal(document.getElementById('registroModal')).show();
+        }
+
+        // ==========================================
+        // VISTAS
+        // ==========================================
+        function switchView(viewName) {
+            if (viewName === 'general') {
+                currentZonaView = null;
+                document.getElementById("view-general").style.display = "block";
+                document.getElementById("view-zona").style.display = "none";
+                renderGeneralDashboard();
+            } else if (viewName.startsWith('zona-')) {
+                const zoneMap = {
+                    'zona-1': "Zona 1 - San Pedro de Macorís",
+                    'zona-2': "Zona 2 - La Romana",
+                    'zona-3': "Zona 3 - Higüey",
+                    'zona-4': "Zona 4 - Hato Mayor / El Seibo",
+                    'zona-5': "Zona 5 - Miches / Punta Cana"
+                };
+                currentZonaView = zoneMap[viewName];
+                document.getElementById("view-general").style.display = "none";
+                document.getElementById("view-zona").style.display = "block";
+                renderZonaDashboard(currentZonaView);
+            }
+        }
+
+        function renderCurrentView() {
+            if (currentZonaView) renderZonaDashboard(currentZonaView);
+            else renderGeneralDashboard();
+        }
+
+        function renderGeneralDashboard() {
+            document.getElementById("stat-total-testificadores").innerText = testificadores.length;
+            document.getElementById("stat-total-distritos").innerText = new Set(testificadores.map(t => t.distrito)).size;
+            document.getElementById("stat-total-iglesias").innerText = new Set(testificadores.map(t => t.iglesia)).size;
+
+            renderGeneralCharts();
+            renderGeneralTable();
+        }
+
+        function renderGeneralCharts() {
+            const zonasKeys = Object.keys(ESTRUCTURA_ADE);
+            const countsByZona = zonasKeys.map(z => testificadores.filter(t => t.zona === z).length);
+
+            if (chartZonasInst) chartZonasInst.destroy();
+            chartZonasInst = new Chart(document.getElementById("chartZonas"), {
+                type: 'bar',
+                data: {
+                    labels: ["Zona 1", "Zona 2", "Zona 3", "Zona 4", "Zona 5"],
+                    datasets: [{ label: 'Testificadores', data: countsByZona, backgroundColor: '#00386B' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            if (chartPieZonasInst) chartPieZonasInst.destroy();
+            chartPieZonasInst = new Chart(document.getElementById("chartPieZonas"), {
+                type: 'doughnut',
+                data: {
+                    labels: ["Zona 1", "Zona 2", "Zona 3", "Zona 4", "Zona 5"],
+                    datasets: [{ data: countsByZona, backgroundColor: ['#002244', '#00386B', '#005691', '#D4AF37', '#7F8C8D'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            const iglCounts = {};
+            testificadores.forEach(t => { iglCounts[t.iglesia] = (iglCounts[t.iglesia] || 0) + 1; });
+            const sortedIglesias = Object.entries(iglCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+            if (chartTopIglesiasInst) chartTopIglesiasInst.destroy();
+            chartTopIglesiasInst = new Chart(document.getElementById("chartTopIglesias"), {
+                type: 'bar',
+                data: {
+                    labels: sortedIglesias.map(i => i[0]),
+                    datasets: [{ label: 'Testificadores', data: sortedIglesias.map(i => i[1]), backgroundColor: '#D4AF37' }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function renderGeneralTable() {
+            if (dataTableGeneral) dataTableGeneral.destroy();
+
+            const tbody = document.querySelector("#tableGeneral tbody");
+            tbody.innerHTML = "";
+
+            testificadores.forEach(t => {
+                const actions = isAuthenticated ? `
+                    <button class="btn btn-sm btn-outline-primary" onclick="editarRegistro('${t.id}')"><i class="fa-solid fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarRegistro('${t.id}')"><i class="fa-solid fa-trash"></i></button>
+                ` : `<span class="text-muted"><i class="fa-solid fa-lock"></i> Lectura</span>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-bold">${t.nombre}</td>
+                        <td><span class="badge bg-light text-dark border">${t.zona}</span></td>
+                        <td>${t.distrito}</td>
+                        <td>${t.iglesia}</td>
+                        <td>${t.fecha}</td>
+                        <td class="no-print">${actions}</td>
+                    </tr>
+                `;
+            });
+
+            dataTableGeneral = $('#tableGeneral').DataTable({
+                dom: 'Bfrtip',
+                buttons: ['excelHtml5', 'pdfHtml5', 'print'],
+                language: { url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' }
+            });
+        }
+
+        function renderZonaDashboard(zonaName) {
+            document.getElementById("zonaTitle").innerText = zonaName;
+            const zonaData = testificadores.filter(t => t.zona === zonaName);
+
+            document.getElementById("stat-zona-testificadores").innerText = zonaData.length;
+            document.getElementById("stat-zona-distritos").innerText = new Set(zonaData.map(t => t.distrito)).size;
+            document.getElementById("stat-zona-iglesias").innerText = new Set(zonaData.map(t => t.iglesia)).size;
+
+            const distSelect = document.getElementById("filterZonaDistrito");
+            distSelect.innerHTML = `<option value="">Todos los Distritos</option>`;
+            if (ESTRUCTURA_ADE[zonaName]) {
+                Object.keys(ESTRUCTURA_ADE[zonaName]).forEach(d => {
+                    distSelect.innerHTML += `<option value="${d}">${d}</option>`;
+                });
+            }
+
+            renderZonaCharts(zonaName, zonaData);
+            filterZonaData();
+        }
+
+        function renderZonaCharts(zonaName, zonaData) {
+            const distCounts = {}, iglCounts = {};
+            zonaData.forEach(t => {
+                distCounts[t.distrito] = (distCounts[t.distrito] || 0) + 1;
+                iglCounts[t.iglesia] = (iglCounts[t.iglesia] || 0) + 1;
+            });
+
+            if (chartZonaDistritosInst) chartZonaDistritosInst.destroy();
+            chartZonaDistritosInst = new Chart(document.getElementById("chartZonaDistritos"), {
+                type: 'bar',
+                data: { labels: Object.keys(distCounts), datasets: [{ label: 'Testificadores', data: Object.values(distCounts), backgroundColor: '#00386B' }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            if (chartZonaIglesiasInst) chartZonaIglesiasInst.destroy();
+            chartZonaIglesiasInst = new Chart(document.getElementById("chartZonaIglesias"), {
+                type: 'bar',
+                data: { labels: Object.keys(iglCounts), datasets: [{ label: 'Testificadores', data: Object.values(iglCounts), backgroundColor: '#D4AF37' }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function filterZonaData() {
+            if (!currentZonaView) return;
+
+            const nameVal = document.getElementById("filterZonaNombre").value.toLowerCase();
+            const distVal = document.getElementById("filterZonaDistrito").value;
+            const iglVal = document.getElementById("filterZonaIglesia").value;
+
+            const iglSelect = document.getElementById("filterZonaIglesia");
+            if (distVal && ESTRUCTURA_ADE[currentZonaView][distVal]) {
+                const currentIgl = iglSelect.value;
+                iglSelect.innerHTML = `<option value="">Todas las Iglesias</option>`;
+                ESTRUCTURA_ADE[currentZonaView][distVal].forEach(i => {
+                    iglSelect.innerHTML += `<option value="${i}">${i}</option>`;
+                });
+                iglSelect.value = currentIgl;
+            }
+
+            const filtered = testificadores.filter(t => {
+                return t.zona === currentZonaView &&
+                       t.nombre.toLowerCase().includes(nameVal) &&
+                       (distVal === "" || t.distrito === distVal) &&
+                       (iglVal === "" || t.iglesia === iglVal);
+            });
+
+            const tbody = document.getElementById("tableZonaBody");
+            tbody.innerHTML = "";
+
+            filtered.forEach(t => {
+                const actions = isAuthenticated ? `
+                    <button class="btn btn-sm btn-outline-primary" onclick="editarRegistro('${t.id}')"><i class="fa-solid fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarRegistro('${t.id}')"><i class="fa-solid fa-trash"></i></button>
+                ` : `<span class="text-muted"><i class="fa-solid fa-lock"></i> Lectura</span>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-bold">${t.nombre}</td>
+                        <td>${t.distrito}</td>
+                        <td>${t.iglesia}</td>
+                        <td>${t.fecha}</td>
+                        <td class="no-print">${actions}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function exportarZonaPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const img = new Image();
+            img.src = LOGO_SDA_SVG;
+
+            img.onload = function() {
+                const canvas = document.createElement("canvas");
+                canvas.width = 200; canvas.height = 200;
+                canvas.getContext("2d").drawImage(img, 0, 0, 200, 200);
+
+                doc.addImage(canvas.toDataURL("image/png"), 'PNG', 14, 12, 22, 22);
+                doc.setFontSize(15); doc.setTextColor(0, 56, 107);
+                doc.text("ASOCIACIÓN DOMINICANA DEL ESTE (ADE)", 40, 20);
+                doc.setFontSize(11); doc.setTextColor(100);
+                doc.text(`Informe Estadístico Oficial: ${currentZonaView}`, 40, 27);
+                doc.text(`Fecha de Emisión: ${new Date().toLocaleDateString("es-DO")}`, 40, 33);
+                doc.setDrawColor(0, 56, 107); doc.setLineWidth(0.8); doc.line(14, 38, 196, 38);
+
+                const zonaData = testificadores.filter(t => t.zona === currentZonaView);
+                doc.setFontSize(10); doc.setTextColor(0);
+                doc.text(`Total Registrados en la Zona: ${zonaData.length}`, 14, 46);
+
+                let y = 56;
+                doc.setFontSize(11); doc.setTextColor(0, 56, 107);
+                doc.text("Listado Detallado:", 14, y); y += 7;
+
+                doc.setFontSize(9); doc.setTextColor(50);
+                zonaData.forEach((item, index) => {
+                    if (y > 275) { doc.addPage(); y = 20; }
+                    doc.text(`${index + 1}. ${item.nombre} | ${item.distrito} | ${item.iglesia}`, 14, y);
+                    y += 6;
+                });
+
+                doc.save(`Informe_ADE_${currentZonaView.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`);
+            };
+        }
+    </script>
+</body>
+</html>
